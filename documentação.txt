@@ -1,0 +1,142 @@
+Documentação do Mini Sistema de Loja
+
+---Um sistema capaz de armazenar produtos, remover produtos, tudo relacionado no servidor e no banco de dados.---
+
+1º Criar a "index.php" (todo o servidor irá procurar a index.php).
+
+2º Configurar o FrontEnd com o Bootstrap.
+
+3º Separar os arquivos para depois chama-los pelo include pois nosso sistema sera dinânico.
+---"header.php":terá o título, links, metas, menus de navegação fixos e possiveis slides shows.---
+---"footer.php":terá  o fexamaentos das tags principais e sources JavaScript.---
+
+4º Criar banco de dados e tabelas (Mysql);
+	- "CREATE DATABASE loja;"
+	- "CREATE TABLE produtos (id integer auto_increment primary key, nome varchar(255), preco decimal(10,2));"
+
+	-Teste banco:
+	- "INSERT INTO produtos values ('Carro',20000)";
+
+	Resultado: id = 1.
+			   nome = Carro.
+			   preco = 20000.
+
+5º Criar arquivo para conectar no banco de dados: "conecta.php"
+	- $conexao = msqli_connect('localhost','root','','loja');//Endereço,usuario,senha,banco.
+	Com essa linha de código iremos nos conectar ao banco de dados "loja" ue está no phpmyadmin.
+
+ 6º Criar arquivo com o formulario para receber os dados e envia-los: "produto-formulario.php"
+
+ 7º Criar arquivo que adiciona os produtos no banco: "adiciona-produto.php"
+
+ 8º Criar arquivo que com funções e query's para manipular banco: "banco-produto.php"
+
+ 9º Criar aquivo que mostre todos os produtos que estão no banco de dados: "produto-lista.php"
+
+10º Criar botão(esse 'button' vai na lista para o úsuario ter a facilidade de remover produto) e o arquivo que remove o produto atraves da função que esta no "banco-produto.php": "remove-produto.php"
+
+11º Adicionar no "produto-formulario.php" a opção de descrição dos produtos através de um select, option do HTML e adicionar no "produto-lista.php" um campo limitado('substr()') para demonstrar as descrições.
+
+12º Incrementar no formulário("produto-formulario.php") a opção de o produto ser usado ou nao:
+	-Adicionar mais uma linha
+		<tr>
+			<td></td>
+			<td><input type="checkbox" name="usado" value"true"> Usado</td>//definindo como usado//
+		</tr>
+
+	- Adicionar essa coluna na tabela para receber a informação.
+		ALTER TABLE produtos ADD COLUMN usado boolean defaul false;//definido como padrão novo//
+
+	- Receber ele no arquivo "adiciona-produto.php" mas com uma condição se ele esta preenchido ou não.
+	if(array_key_exists('usado',$_POST)){
+		$usado = "true";
+	}else {
+		$usado = "false";
+	}
+
+	- Adicionar a variavel $usado como parametro na insereProduto("adiciona-produto.php").	
+	- Adicionar a variavel $usado como parametro na função insereProduto("banco-produto.php") e na query inserindo em produtos a opção usado e no values como {$usado}.(obs:Se aparecer algum erro na query é so dar um echo $query;)
+
+13º Adicionar ao sistema a opção de alterar
+
+	- No arquivo "produto-lista.php" adicionar um link com a class 'btn btn-primary'(bootstrap) que vai para o arquivo "produto-altera-formulario.php"(ainda sera criado).
+	- Direcionar o botão para o 'id' atraves do metodo get(uri).
+		<td><a class="btn btn-primery" href="produto-altera-formulario.php?id<?=$produto['id']?>">alterar</td>
+
+14º Criar arquivo "produto-altera-formulario.php":
+
+	- obs: formulario é o mesmo que o do "produto-formulario.php", somente alterar alguns campos.
+	- Alterar titulo do formulario: 'Alterando Produto'
+	- Alterar o action para 'altera-produto.php'
+	- Alterar o value do botão para ALterar
+
+15º Carregar o produto do banco de dados no formulário:
+
+	- Primeiro pegar o 'id' do produdo: 
+			$id = $_GET['id'];
+	- Chamar a função 'buscaProduto()' será criada no "banco-produto.php":
+			$produto = buscaProduto($conexao,$id);
+
+16º No arquivo 'banco-produto.php' criar a função 'buscaProduto()'
+
+	-	function buscaProduto($conexao,$id){
+			$query = "SELECT * FROM produtos where id={$id}";
+			$resultado = msqli_query($conexao,$query);
+			return msqli_fetch_assoc($resultado);
+		}	
+
+17º No arquivo 'produto-altera-formulario.php' chamar o 'banco-produto.php' e carregar os produtos nos campos atraves do value.
+	
+	- 	include ('banco-produto.php');
+	- No input 'nome' colocar o value="<?=$produto['nome']?>"
+	- No input 'preço' colocar o value="<?=$produto['preco']?>"
+	- No caso da 'descrição' devemos colocar direto no text area <?=$produto['descricao']?>
+	- No campo 'usado' devemos aplicar uma condição para avaliar o resultado do banco(checked='cheked' ou checked='') 
+			$usado = $produto['usado'] ? "checked='checked'" : ""; //Condição ternária//
+			//Se o produto for usado o checked sera selecionado agora se não for o checked nem aparecera//
+
+	- No input 'usado' colocar <?=$usado?>		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
